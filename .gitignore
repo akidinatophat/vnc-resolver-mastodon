@@ -1,0 +1,10 @@
+.env
+
+node_modules/
+npm-debug.log
+yarn-error.log
+
+package-lock.json
+package.json
+yarn.lock
+pnpm-lock.yaml

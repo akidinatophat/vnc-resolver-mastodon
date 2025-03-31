@@ -18,6 +18,12 @@ var debug_access_token = process.env.DEBUG_ACCESS_TOKEN;
 
 var discord_logging_webhook = process.env.DISCORD_WEBHOOK;
 
+// internal usage vars - don't mess with unless you know what you're doing
+var get_retry_count = 0;
+var makepost_retry_count = 0;
+var max_retry_count = 3;
+var retry_time = 10000;
+
 var vncresolver_random_url = "https://computernewb.com/vncresolver/api/v1/random";
 var vncresolver_screenshot_url = "https://computernewb.com/vncresolver/api/v1/screenshot";
 
@@ -27,12 +33,6 @@ var debug_interval = "* * * * *";
 if (process.argv.includes('--debug')) {
     debug = true;
 }
-
-// internal usage vars - don't mess with
-var get_retry_count = 0;
-var makepost_retry_count = 0;
-var max_retry_count = 3;
-var retry_time = 10000;
 
 // got options
 const options = {
@@ -227,6 +227,7 @@ https://computernewb.com/vncresolver/browse#id/${String(random_vnc.id)}`
           var postresponse = await postimage(post_content, "unlisted", image_url, `${String(null_detect(random_vnc.width))}x${String(null_detect(random_vnc.height))} screenshot of VNC Resolver ID ${String(random_vnc.id)}`)
           if (postresponse != "SUCCESS"){
             if (makepost_retry_count >= max_retry_count){
+              makepost_retry_count = 0;
               log("Making a post has failed.", postresponse + `\n\nMax retries. Retrying in an hour.`, 1);
             } else {
               makepost_retry_count = makepost_retry_count + 1
@@ -238,6 +239,7 @@ https://computernewb.com/vncresolver/browse#id/${String(random_vnc.id)}`
     } catch (error) {
       console.log("GET Error: " + error);
         if (get_retry_count >= max_retry_count){
+          get_retry_count = 0;
           log("A GET Request has failed.", error + `\n\nMax retries. Making announcement and retrying in an hour.`, 1);
           postimage("***AUTOMATED POST***\n\nSorry! We're currently experiencing technical difficulties. We're aware of the issue, and if applicable, we'll post an update regarding this issue. Thanks!"
             , "unlisted", "https://brew.rocks/stuff/vnc_errorscreen_2.png", `SMPTE color bars with text reading "TECHNICAL DIFFICULTIES, we're working on it!", dizzy brew in bottom right`);
@@ -250,11 +252,15 @@ https://computernewb.com/vncresolver/browse#id/${String(random_vnc.id)}`
 };
 
 
-console.log(`VNC Resolver Bot v${version} initializing...`)
+console.log(`VNC Resolver Bot v${version} initializing...`);
+
 if (debug == true){
   console.log("DEBUG MODE");
-}
-log("Bot has started.", "The bot has initialized and started.", 0);
+  log("Bot has started. (DEBUG)", `The bot has initialized and started at ${convert_date(Date.now())}. **Debug mode is enabled!**`, 2);
+} else {
+  log("Bot has started.", `The bot has initialized and started at ${convert_date(Date.now())}.`, 0);
+};
+
 cron.schedule(interval, () => {
   run();
 });
