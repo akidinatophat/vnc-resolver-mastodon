@@ -254,6 +254,7 @@ console.log(`VNC Resolver Bot v${version} initializing...`)
 if (debug == true){
   console.log("DEBUG MODE");
 }
+log("Bot has started.", "The bot has initialized and started.", 0);
 cron.schedule(interval, () => {
   run();
 });
