@@ -6,4 +6,5 @@ This bot posts a random VNC Resolver entry from Computernewb to a Mastodon insta
 - got
 - dotenv
 - node-cron
+
 Install: `npm i masto got dotenv node-cron`
