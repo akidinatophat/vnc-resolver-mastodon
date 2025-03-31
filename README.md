@@ -1,5 +1,5 @@
 # vnc-resolver-mastodon
-This bot posts a random VNC Resolver entry from Computernewb to a Mastodon instance. That's really it.
+This NodeJS bot posts a random VNC Resolver entry from Computernewb to a Mastodon instance. That's really it.
 
 # Required libraries
 - masto
